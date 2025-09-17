@@ -46,10 +46,14 @@ public class Activity2 {
 
   //exercise 3
   public static <T> int countNodesInLevel(BinaryTree<T> tree, int level) {
-    // TODO: Implementa el conteo recursivo de nodos en un nivel dado
-    return 0;
+    if (tree == null || tree.isEmpty()){ return 0;}
+    if (level > 0) {
+      
+      return countNodesInLevel(tree.hasLeftChild() ? tree.getLeftChild() : null, level-1) + countNodesInLevel(tree.hasRightChild() ? tree.getRightChild() : null, level-1);
+    }else{
+      return 1;
+    }
   }
-
   //exercise 4
   public static <T> BinaryTree<T> removeLeaves(BinaryTree<T> tree) {
     // TODO: Implementa la eliminación recursiva de las hojas de un árbol
@@ -91,4 +95,5 @@ public class Activity2 {
     // TODO: Implementa la comprobación recursiva de si un elemento está en el nivel k del árbol
     return false;
   }
+
 }
