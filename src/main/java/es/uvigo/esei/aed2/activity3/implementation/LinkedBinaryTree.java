@@ -36,22 +36,40 @@ public class LinkedBinaryTree<T> implements BinaryTree<T> {
   private LinkedBinaryTreeNode<T> rootNode;
 
   public LinkedBinaryTree() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.rootNode = null;
   }
 
   public LinkedBinaryTree(T value) throws NullPointerException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (value == null) {throw new NullPointerException("NULL");}
+    this.setRootValue(value);
   }
 
   public LinkedBinaryTree(T value, BinaryTree<T> leftChild, BinaryTree<T> rightChild)
   throws NullPointerException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (value == null || leftChild == null || rightChild == null){throw new NullPointerException("NULL NULL NULL");}
+    this.setRightChild(rightChild);
+    this.setLeftChild(leftChild);
+    this.setRootValue(value);
+  }
+
+  private LinkedBinaryTree(LinkedBinaryTreeNode<T> node){
+    this.rootNode = node;
+  }
+
+  private LinkedBinaryTreeNode<T> buildBinaryTree(BinaryTree<T> tree){
+    if (tree == null){
+      return null;
+    }
+    return new LinkedBinaryTreeNode<>(tree.getRootValue(), buildBinaryTree(tree.getLeftChild()), buildBinaryTree(tree.getRightChild()));
   }
 
   // Métodos lanzan excepción
   @Override
   public T getRootValue() throws EmptyTreeException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (this.rootNode == null) {
+      
+    }
+    return this.rootNode.getValue();
   }
 
   @Override
@@ -59,58 +77,92 @@ public class LinkedBinaryTree<T> implements BinaryTree<T> {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  @Override
-  public boolean contains(T value) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
 
-  @Override
-  public boolean hasLeftChild() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   public BinaryTree<T> getLeftChild() throws EmptyTreeException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (this.isEmpty()) {
+      throw new EmptyTreeException("empty tree");
+    }
+    if (this.rootNode.hasLeftChild()) {
+      return new LinkedBinaryTree<>(this.rootNode.getLeftChild());
+    }else{
+      return null;
+    }
   }
 
   @Override
   public void setLeftChild(BinaryTree<T> leftChild) throws EmptyTreeException, NullPointerException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (leftChild == null) {
+      throw new NullPointerException("null child");
+    }
+    if (this.isEmpty()) {
+      throw new EmptyTreeException("EmptyTree child");
+    }
+    this.rootNode.setLeftChild(buildBinaryTree(leftChild));//requires a LinkedBinaryTreeNode
   }
 
   @Override
   public void removeLeftChild() throws EmptyTreeException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (this.isEmpty()) {
+      throw new EmptyTreeException("Empty tree");
+    }
+    if (this.hasLeftChild()){
+      this.setLeftChild(null);
+    }
   }
 
   @Override
   public boolean hasRightChild() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (this.getRightChild() == null) {
+      return false;
+    }
+    return true;
   }
 
   @Override
   public BinaryTree<T> getRightChild() throws EmptyTreeException {
-    throw new UnsupportedOperationException("Not supported yet.");
+        if (this.isEmpty()) {
+      throw new EmptyTreeException("empty tree");
+    }
+    if (this.rootNode.hasRightChild()) {
+      return new LinkedBinaryTree<>(this.rootNode.getRightChild());
+    }else{
+      return null;
+    }
   }
 
   @Override
   public void setRightChild(BinaryTree<T> rightChild) throws EmptyTreeException, NullPointerException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (rightChild == null) {
+      throw new NullPointerException("null child");
+    }
+    if (this.isEmpty()) {
+      throw new EmptyTreeException("EmptyTree child");
+    }
+    this.rootNode.setRightChild(buildBinaryTree(rightChild));//requires a LinkedBinaryTreeNode
   }
 
   @Override
   public void removeRightChild() throws EmptyTreeException {
-    throw new UnsupportedOperationException("Not supported yet.");
+     if (this.isEmpty()) {
+      throw new EmptyTreeException("Empty tree");
+    }
+    if (this.hasRightChild()){
+      this.setLeftChild(null);
+    }
   }
   
   @Override
   public void clear() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.setLeftChild(null);
+    this.setRightChild(null);
+    this.rootNode = null;
   }
 
   @Override
   public boolean isEmpty() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (hasLeftChild() || this.hasRightChild() || (this.getRightChild().getRootValue() != null) && (this.getLeftChild().getRootValue() != null)) {
+      return true;
+    }
+    return false;
   }
 }
