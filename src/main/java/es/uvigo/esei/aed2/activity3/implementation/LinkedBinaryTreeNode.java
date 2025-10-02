@@ -1,7 +1,5 @@
 package es.uvigo.esei.aed2.activity3.implementation;
 
-import es.uvigo.esei.aed2.tree.binary.BinaryTree;
-
 /*-
  * #%L
  * AEDII - Activities
@@ -58,6 +56,7 @@ public class LinkedBinaryTreeNode<T> {
     this.leftChild = leftChild;
     this.rightChild = rightChild;
   }
+  
 
   public T getValue() {
     return this.value;
