@@ -77,7 +77,30 @@ public class LinkedBinaryTree<T> implements BinaryTree<T> {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
+  private <T> boolean contains(T value,LinkedBinaryTreeNode<T> node ){
+    if (node == null) {
+      return false;
+    }
+    if (node.getValue() == value) {
+      return true;
+    }
+    return (contains(value,node.getLeftChild()) ||contains(value,node.getRightChild()));
+  }
 
+  @Override
+  public boolean contains(T value) {
+    return contains(value,this.rootNode);
+  }
+
+  @Override
+  public boolean hasLeftChild() {
+    if (this.getLeftChild() == null ) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
   public BinaryTree<T> getLeftChild() throws EmptyTreeException {
     if (this.isEmpty()) {
       throw new EmptyTreeException("empty tree");
