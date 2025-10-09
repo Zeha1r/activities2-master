@@ -32,11 +32,22 @@ import java.util.ArrayList;
 public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
 
   // Exercise 1
-  private final ArrayList<T> array;
+  private final ArrayList<T> heap;
 
   public BinaryMaxHeap() {
-    this.array = new ArrayList<>();
-    this.array.add(0, null);
+    this.heap = new ArrayList<>();
+    this.heap.add(0, null);
+  }
+
+  private void generalHeapNull(boolean checkSize) throws NullPointerException, HeapEmptyException {
+    if (this.heap == null) {
+      throw new NullPointerException("Heap equals Null");
+    }
+    if (checkSize) {
+      if (this.heap.isEmpty() || this.heap.size() == 1) {
+        throw new HeapEmptyException("Empty Heap");
+      }
+    }
   }
 
   /**
@@ -47,7 +58,11 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    */
   @Override
   public boolean isEmpty() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (this.heap.isEmpty() || this.heap.size() == 1) {
+      return true;  
+    }else{
+      return false;
+    }
   }
 
   /**
@@ -58,7 +73,10 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    */
   @Override
   public T getMaxValue() throws HeapEmptyException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (this.isEmpty()) {
+      throw new HeapEmptyException("empty heap");
+    }
+    return this.heap.get(1);
   }
 
   /**
@@ -69,7 +87,14 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    */
   @Override
   public T removeMaxValue() throws HeapEmptyException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    if (this.isEmpty()) {
+      throw new HeapEmptyException("empty heap");
+    }
+    T tmp = this.getMaxValue();
+    this.heap.set(1, this.heap.get(this.heap.size() - 1));
+    sink(1);
+    this.heap.remove(this.heap.size() - 1);
+    return tmp;
   }
 
   /**
@@ -79,7 +104,34 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    * @param hollow la posición del elemento a mover.
    */
   private void sink(int hollow) {
-    throw new UnsupportedOperationException("Not supported yet.");
+    int currpos = hollow;
+
+    while (currpos * 2 + 1 > this.heap.size() || currpos * 2  > this.heap.size()) {
+      int lchild = 2 * currpos;
+      int rchild = 2 * currpos + 1;
+
+      if (this.heap.get(currpos).compareTo(this.heap.get(lchild)) < 0) {
+        T tmp = this.heap.get(lchild);
+        this.heap.set(lchild, this.heap.get(currpos));
+        this.heap.set(currpos, tmp);
+        if (this.heap.get(currpos).compareTo(this.heap.get(rchild)) < 0) {
+          tmp = this.heap.get(rchild);
+          this.heap.set(rchild, this.heap.get(currpos));
+          this.heap.set(currpos, tmp);
+        }
+        if (currpos * 2 < this.heap.size()) {
+          currpos = currpos * 2;
+        }
+      } else if (this.heap.get(currpos).compareTo(this.heap.get(rchild)) < 0) {
+        T tmp = this.heap.get(rchild);
+        this.heap.set(rchild, this.heap.get(currpos));
+        this.heap.set(currpos, tmp);
+        if (currpos * 2 + 1 < this.heap.size()) {
+          currpos = currpos * 2 + 1;
+        }
+      }
+
+    }
   }
 
   /**
@@ -90,7 +142,14 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    */
   @Override
   public void add(T value) throws NullPointerException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    generalHeapNull(false);
+    int pos = this.heap.size();
+    while (this.heap.get(pos/2).compareTo(value) < 1){
+      this.heap.set(pos, this.heap.get(pos/2));
+      this.heap.set(pos/2, value);
+      pos = pos/2;
+    }
+    this.heap.add(pos, value);
   }
 
   /**
@@ -98,7 +157,8 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    */
   @Override
   public void clear() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    this.heap.clear();
+    this.heap.add(0,null);
   }
 
   /**
@@ -109,7 +169,16 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    */
   @Override
   public void insert(T value) throws NullPointerException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    generalHeapNull(false);
+    this.heap.add(value);
+    int currpos = this.heap.size() - 1;
+    while (this.heap.get(currpos).compareTo(this.heap.get(currpos/2)) >= 0 || currpos > 1) {
+      T tmp = this.heap.get(currpos/2);
+
+      this.heap.set(currpos/2, this.heap.get(currpos));
+      this.heap.set(currpos, tmp);
+      currpos = currpos / 2;
+    }
   }
 
   /**
@@ -117,7 +186,51 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    */
   @Override
   public void orderHeap() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+    generalHeapNull(true);
+    int currpos = 1;
+    boolean haschanged = true;
+    boolean hasmoved = false;
 
+
+
+    while ( hasmoved || !(!haschanged && currpos != this.heap.size() - 1) ) {
+      int lchild = 2 * currpos;
+      int rchild = 2 * currpos + 1;
+
+
+      if (this.heap.get(currpos).compareTo(this.heap.get(lchild)) < 0) {
+        haschanged = true;
+        T tmp = this.heap.get(lchild);
+        this.heap.set(lchild, this.heap.get(currpos));
+        this.heap.set(currpos, tmp);
+        if (this.heap.get(currpos).compareTo(this.heap.get(rchild)) < 0) {
+          tmp = this.heap.get(rchild);
+          this.heap.set(rchild, this.heap.get(currpos));
+          this.heap.set(currpos, tmp);
+        }
+        if (currpos * 2 < this.heap.size()) {
+          currpos = currpos * 2;
+          hasmoved = true;
+        }else if(hasmoved){
+          currpos = 1;
+          haschanged = false;
+        }
+      } else if (this.heap.get(currpos).compareTo(this.heap.get(rchild)) < 0) {
+        haschanged = true;
+        T tmp = this.heap.get(rchild);
+        this.heap.set(rchild, this.heap.get(currpos));
+        this.heap.set(currpos, tmp);
+        if (currpos * 2 + 1 < this.heap.size()) {
+        currpos = currpos * 2 + 1;
+        hasmoved = true;
+        }else if (hasmoved){
+          currpos = 1;
+          haschanged = false;
+        }
+      }
+      if (!haschanged) {
+        currpos = currpos++;
+      }
+    }
+  }
 }
