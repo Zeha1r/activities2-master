@@ -58,7 +58,7 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
    */
   @Override
   public boolean isEmpty() {
-    if (this.heap.isEmpty() || this.heap.size() == 1) {
+    if (this.heap.size() <= 1) {
       return true;  
     }else{
       return false;
@@ -143,13 +143,23 @@ public class BinaryMaxHeap<T extends Comparable<T>> implements MaxHeap<T> {
   @Override
   public void add(T value) throws NullPointerException {
     generalHeapNull(false);
-    int pos = this.heap.size();
+    if (this.isEmpty()) {
+      this.heap.add(value);
+    }else if (this.heap.isEmpty()) {
+      this.heap.add(0,null);
+      this.heap.add(value);
+    }else
+    {
+      int pos = this.heap.size();
+      
     while (this.heap.get(pos/2).compareTo(value) < 1){
       this.heap.set(pos, this.heap.get(pos/2));
       this.heap.set(pos/2, value);
       pos = pos/2;
     }
     this.heap.add(pos, value);
+    }
+    
   }
 
   /**
