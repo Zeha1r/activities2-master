@@ -1,5 +1,6 @@
 package es.uvigo.esei.aed2.activity3.implementation;
 
+import es.uvigo.esei.aed1.tads.common.EmptyException;
 import es.uvigo.esei.aed2.tree.binary.BinaryTree;
 
 /*-
@@ -40,16 +41,31 @@ public class LinkedBinaryTree<T> implements BinaryTree<T> {
   }
 
   public LinkedBinaryTree(T value) throws NullPointerException {
-    if (value == null) {throw new NullPointerException("NULL");}
+    if (value == null) {
+      rootNode = new LinkedBinaryTreeNode<>(null);
+      throw new NullPointerException("Null");
+    }
+    rootNode =  new LinkedBinaryTreeNode<>(value);
     this.setRootValue(value);
+
   }
 
   public LinkedBinaryTree(T value, BinaryTree<T> leftChild, BinaryTree<T> rightChild)
   throws NullPointerException {
-    if (value == null || leftChild == null || rightChild == null){throw new NullPointerException("NULL NULL NULL");}
-    this.setRightChild(rightChild);
-    this.setLeftChild(leftChild);
-    this.setRootValue(value);
+    if (value == null || leftChild == null || rightChild == null){
+      rootNode =  new LinkedBinaryTreeNode<>(null, buildBinaryTree(null), buildBinaryTree(null));
+      this.setRightChild(null);
+      this.setLeftChild(null);
+      this.setRootValue(null);
+      throw new NullPointerException("Null|Null|Null");
+  }
+    rootNode =  new LinkedBinaryTreeNode<>(value, buildBinaryTree(leftChild), buildBinaryTree(rightChild));
+    // Este es el mismo problema que tienes en el otro constructor, tienes que crear el nodo con esos valores y luego asignarselo a rootNode. Aquí todavía no tienes ningún árbol creado, para eso sirve el constructor.
+   this.setRightChild(rightChild);
+   this.setLeftChild(leftChild);
+   this.setRootValue(value);
+      // Para crearlo, tienes que llamar al constructor de LinkedBinaryTreeNode que recibe 3 parámetros. El problema es que recibe como left y right child, un LinkedBinaryTreeNode, por eso necesitas llamar al método que convierte un árbol en un nodo
+      
   }
 
   private LinkedBinaryTree(LinkedBinaryTreeNode<T> node){
@@ -67,14 +83,18 @@ public class LinkedBinaryTree<T> implements BinaryTree<T> {
   @Override
   public T getRootValue() throws EmptyTreeException {
     if (this.rootNode == null) {
-      
+      throw new EmptyTreeException("empty tree rootvalue");
     }
     return this.rootNode.getValue();
   }
 
   @Override
   public void setRootValue(T value) throws EmptyTreeException, NullPointerException {
-    throw new UnsupportedOperationException("Not supported yet.");
+     if (this.isEmpty()){
+      throw new EmptyException("Empty tree rootValue");
+    }
+    if(value == null){throw new NullPointerException("Null value setRoot");} 
+    this.rootNode.setValue(value);
   }
 
   private <T> boolean contains(T value,LinkedBinaryTreeNode<T> node ){
@@ -94,10 +114,10 @@ public class LinkedBinaryTree<T> implements BinaryTree<T> {
 
   @Override
   public boolean hasLeftChild() {
-    if (this.getLeftChild() == null ) {
+    if (this.isEmpty()){
       return false;
-    }
-    return true;
+    }  
+    returnx this.rootNode.hasLeftChild();
   }
 
   @Override
@@ -125,14 +145,15 @@ public class LinkedBinaryTree<T> implements BinaryTree<T> {
 
   @Override
   public void removeLeftChild() throws EmptyTreeException {
+
     if (this.isEmpty()) {
       throw new EmptyTreeException("Empty tree");
     }
-    if (this.hasLeftChild()){
-      this.setLeftChild(null);
+    if (this.hasLeftChild()){ 
+      this.setLeftChild(null); // El método setLeftChild si le pasas un null, lanza una excepción. No puedes usarlo aquí, tienes que actualizar directamente el atributo.
     }
   }
-
+ // Para los métodos rigth, tendrás que hacer las mismas correcciones que te indiqué en los left
   @Override
   public boolean hasRightChild() {
     if (this.getRightChild() == null) {
@@ -176,13 +197,15 @@ public class LinkedBinaryTree<T> implements BinaryTree<T> {
   
   @Override
   public void clear() {
-    this.setLeftChild(null);
+     // No puedes usar los métodos set porque lanzan una excepción. Sería suficiente con que rootNode = null, no necesitas nada más.
+    this.setLeftChild(null); 
     this.setRightChild(null);
     this.rootNode = null;
   }
 
   @Override
   public boolean isEmpty() {
+    // No es correcto,  un LinkedBinaryTree vacío es un árbol cuyo rootNode apunta a null, tal y como se define en el constructor
     if (hasLeftChild() || this.hasRightChild() || (this.getRightChild().getRootValue() != null) && (this.getLeftChild().getRootValue() != null)) {
       return true;
     }
